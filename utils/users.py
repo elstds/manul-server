@@ -1,7 +1,7 @@
 from utils import hash_password
 def add_user(connection, username, name, surname, password, role, pic=""):
     connection.open()
-    cursor = connection._connection.cursor()
+    cursor = connection.cursor()
     password = hash_password(password)
     querry = (f"INSERT INTO users (username, name, surname, password, role, picture) VALUES (%s, %s, %s, %s, %s, %s);")
     try:
@@ -18,8 +18,17 @@ def rm_user(connection, user_id):
 
 def list_users(connection):
     connection.open()
-    cursor = connection._connection.cursor()
+    cursor = connection.cursor()
     querry = "SELECT id, username, name, surname, role FROM users;"
+    try:
+        cursor.execute(querry)
+        res = cursor.fetchone()
+    except Exception as ex:
+        print("[Info] Ошибка чтения данных:", ex)
+    finally:
+        cursor.close()
+        connection.close()
+        return res
 
 def login():
     pass

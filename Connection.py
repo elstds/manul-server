@@ -7,7 +7,7 @@ class Connection:
         self.db_name = db_name,
     def open(self):
         try:
-            self._connection = psycopg2.connect(
+            connection = psycopg2.connect(
                 host = self.host,
                 user = self.user,
                 password = self.password,
@@ -16,7 +16,7 @@ class Connection:
         except Exception as Ex:
             print("[Info] Connection error: ", Ex)
         finally:
-            self._connection.close()
+            return connection
 
     def close(self):
         self._connection.close()
