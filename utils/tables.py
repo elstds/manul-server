@@ -5,7 +5,7 @@ def create_users_table():
         cur = con.cursor()
         querry = ("CREATE TABLE IF NOT EXISTS users("
                   "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                  "username TEXT NOT NULL,"
+                  "username TEXT NOT NULL UNIQUE,"
                   "name TEXT NOT NULL,"
                   "surname TEXT NOT NULL,"
                   "password TEXT NOT NULL,"
@@ -21,7 +21,7 @@ def create_roles_table():
         cur = con.cursor()
         querry = ("CREATE TABLE IF NOT EXISTS roles("
                   "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                  "rolename TEXT NOT NULL,"
+                  "rolename TEXT NOT NULL UNIQUE,"
                   "privilegits TEXT"
                   ");")
         cur.execute(querry)

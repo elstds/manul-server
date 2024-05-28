@@ -1,35 +1,51 @@
 from utils import hash_password
 import sqlite3
+from utils import check_for_injection
+
 def add_user(username, name, surname, password, role, pic=""):
     with sqlite3.connect("data/manul.db") as con:
         cur = con.cursor()
         password = hash_password(password)
-        querry = (f"INSERT INTO users (username, name, surname, password, role, picture) VALUES (%s, %s, %s, %s, %s, %s);")
-        try:
-            cursor.execute(querry, (username, name, surname, password, role, pic))
-        except Exception as ex:
-            print("[Info] Ошибка добавления данных:", ex)
-        finally:
-            cursor.close()
-            connection.close()
+        querry = (f"INSERT INTO users (username, name, surname, password, role_id, picture) VALUES "
+                  f"('{username}', '{name}', '{surname}', '{password}', '{role}', '{pic}');")
+        if check_for_injection(querry):
+            cur.execute(querry)
+            cur.close()
+            return True
+        else:
+            cur.close()
+            return False
 
 
-def rm_user(connection, user_id):
-    pass
+def rm_user(username):
+    with sqlite3.connect("data/manul.db") as con:
+        cur = con.cursor()
+        querry = f"DELETE FROM users WHERE username='{username}';"
+        if check_for_injection(querry):
+            cur.execute(querry)
+            cur.close()
+        else:
+            return false
 
-def list_users(connection):
-    connection.open()
-    cursor = connection.cursor()
-    querry = "SELECT id, username, name, surname, role FROM users;"
-    try:
-        cursor.execute(querry)
-        res = cursor.fetchone()
-    except Exception as ex:
-        print("[Info] Ошибка чтения данных:", ex)
-    finally:
-        cursor.close()
-        connection.close()
+def list_users():
+    with sqlite3.connect("data/manul.db") as con:
+        cur = con.cursor()
+        querry = "SELECT id, username, name, surname, role_id FROM users;"
+        cur.execute(querry)
+        res = cur.fetchall()
+        cur.close()
         return res
 
-def login():
-    pass
+
+def login(username, password):
+    with sqlite3.connect('data/manul.db') as con:
+        cur = con.cursor()
+        password = hash_password(password)
+        querry = f"SELECT * FROM users WHERE username='{username}' AND password='{password}';"
+        if check_for_injection(querry):
+            cur.execute(querry)
+            res = cur.fetchone()
+            cur.close()
+            return res
+        else:
+            return False
